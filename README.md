@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MUSKVERSE — The Empire Timeline
 
-## Getting Started
+An immersive, single-page visual history of Elon Musk — from a $500 space
+game written at age 12 to the world's first trillionaire.
 
-First, run the development server:
+**Live:** https://muskverse-nine.vercel.app
+
+![MUSKVERSE](https://muskverse-nine.vercel.app/opengraph-image)
+
+## The story
+
+Nine full-viewport era sections, each with a 3D centerpiece built entirely
+from Three.js geometry primitives (no model downloads):
+
+| Era | Section | 3D centerpiece |
+|-----|---------|----------------|
+| 1971 | The Origin | Voxel Blastar ship on a retro CRT grid |
+| 1995 | Zip2 | Wireframe city-guide globe with map pins |
+| 1999 | X.com / PayPal | Spinning chrome coin with X mark |
+| 2002 | SpaceX | Low-poly rocket with flickering plume |
+| 2003 | Tesla | Extruded sedan silhouette on a turntable |
+| 2016 | Neuralink | Vertex-displaced brain mesh with electrodes |
+| 2016 | The Boring Company | Infinite glowing tunnel rings |
+| 2022 | X / Twitter | Monolithic chrome X with broadcast ring |
+| 2023 | xAI | Nested icosahedra with pulsing energy core |
+
+Plus: scroll-driven camera rig in every scene, a persistent year rail,
+an interactive horizontal timeline (1971 → 2026, 33 events with glass
+modals), an animated stats bento, and a $1,000,000,000,000 tribute counter.
+
+## Stack
+
+- **Next.js 14** (App Router) + TypeScript
+- **Tailwind CSS**
+- **Three.js** via @react-three/fiber + @react-three/drei
+- **Framer Motion** + **Lenis** smooth scroll
+- **Upstash Redis** for the subscribe form (file fallback in dev)
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+npm run build      # production build
+npm test           # Playwright smoke tests
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture notes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- All content lives in [`data/companies.ts`](data/companies.ts) — no CMS.
+- 3D scenes lazy-load via `next/dynamic` and mount only near the viewport,
+  keeping ≤2 WebGL contexts alive.
+- On mobile, every scene swaps to an animated SVG fallback — zero WebGL.
+- `/api/timeline` serves the events JSON; the timeline section fetches it
+  client-side. `/api/subscribe` validates server-side and writes to Redis
+  (`KV_REST_API_URL`/`KV_REST_API_TOKEN`) or `lib/subscribers.json` locally.
 
-## Learn More
+Lighthouse (desktop, production): performance 87 · accessibility 95 ·
+best practices 100 · SEO 100.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Dedicated to Elon Musk · 1971 → ∞. An independent visual history, not
+affiliated with Elon Musk or any company shown.*
